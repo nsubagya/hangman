@@ -1,74 +1,63 @@
-import streamlit as st
 import random as rand
-
-# Import your word list and hangman art (stages)
+import streamlit as st
 from hangman_arts import logo, stages
 from hangman_words import english_word_list
 
-# Define game variables
-if "random_word" not in st.session_state:
-    st.session_state.random_word = rand.choice(english_word_list).lower()
-    st.session_state.random_word_length = len(st.session_state.random_word)
-    st.session_state.display = ['_'] * st.session_state.random_word_length
+# Initialize game state
+if 'random_word' not in st.session_state:
+    random_word = rand.choice(english_word_list).lower()
+    st.session_state.random_word = random_word
+    st.session_state.random_word_length = len(random_word)
+    st.session_state.display = ['_'] * len(random_word)
     st.session_state.lives = 6
-    st.session_state.win_game = False
     st.session_state.non_correct_letters = []
+    st.session_state.win_game = False
 
-# Clear previous guesses and set up the header
+# Display game logo and word length
 st.title("Hangman Game")
 st.write(logo)
-
-# Function to reset the game
-def reset_game():
-    st.session_state.random_word = rand.choice(english_word_list).lower()
-    st.session_state.random_word_length = len(st.session_state.random_word)
-    st.session_state.display = ['_'] * st.session_state.random_word_length
-    st.session_state.lives = 6
-    st.session_state.win_game = False
-    st.session_state.non_correct_letters = []
-    st.experimental_rerun()
-
-# Display the word and incorrect guesses
 st.write(f"Word length: {st.session_state.random_word_length}")
-st.write(" ".join(st.session_state.display))
+st.write(f"Word guessed so far: {' '.join(st.session_state.display)}")
 st.write(f"Lives remaining: {st.session_state.lives}")
 st.write(f"Incorrect guesses: {', '.join(st.session_state.non_correct_letters)}")
 
-# Take user input for guesses
-guess = st.text_input("Guess a letter:").lower()
+# Handle guess input
+guess = st.text_input("Guess a letter: ").lower()
 
-if st.button("Submit Guess") and not st.session_state.win_game and st.session_state.lives > 0:
+# Game logic
+if guess:
     if guess in st.session_state.display:
-        st.warning(f"You already guessed the letter '{guess}'")
-
+        st.warning(f"You've already guessed the letter '{guess}'. Try another one.")
     elif guess in st.session_state.non_correct_letters:
-        st.warning(f"You already guessed the incorrect letter '{guess}'")
-
+        st.warning(f"You've already guessed the letter '{guess}' incorrectly. Try another one.")
     elif guess in st.session_state.random_word:
         for index, letter in enumerate(st.session_state.random_word):
             if letter == guess:
                 st.session_state.display[index] = letter
         if '_' not in st.session_state.display:
+            st.success("Congratulations! You've won the game!")
             st.session_state.win_game = True
-            st.success("Congratulations, you won!")
     else:
         st.session_state.lives -= 1
         st.session_state.non_correct_letters.append(guess)
+        st.error(f"The letter '{guess}' is not in the word. Try again!")
         st.write(stages[st.session_state.lives])
 
-        if st.session_state.lives == 0:
-            st.error("Sorry, you lost. The word was: " + st.session_state.random_word)
+    # Check if game over
+    if st.session_state.lives == 0:
+        st.error(f"Game over! The word was '{st.session_state.random_word}'.")
 
-    # Clear the input after submission
-    st.experimental_rerun()
+# Display current word and remaining lives
+st.write(f"Word so far: {' '.join(st.session_state.display)}")
+st.write(f"Lives remaining: {st.session_state.lives}")
+st.write(f"Incorrect guesses: {', '.join(st.session_state.non_correct_letters)}")
 
-# Game status messages
-if st.session_state.win_game:
-    st.balloons()
-    st.success(f"You've won! The word was: {st.session_state.random_word}")
-
-elif st.session_state.lives == 0:
-    st.error(f"Game Over! The word was: {st.session_state.random_word}")
-
-# Button to reset the game
-st.button("Restart Game", on_click=reset_game)
+# Reset button to restart the game
+if st.button('Reset Game'):
+    random_word = rand.choice(english_word_list).lower()
+    st.session_state.random_word = random_word
+    st.session_state.random_word_length = len(random_word)
+    st.session_state.display = ['_'] * len(random_word)
+    st.session_state.lives = 6
+    st.session_state.non_correct_letters = []
+    st.session_state.win_game = False
