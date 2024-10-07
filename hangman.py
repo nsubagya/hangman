@@ -3,7 +3,7 @@ import streamlit as st
 from hangman_arts import logo, stages
 from hangman_words import english_word_list
 
-# Initialize game state
+# Initialize game state only once
 if 'random_word' not in st.session_state:
     random_word = rand.choice(english_word_list).lower()
     st.session_state.random_word = random_word
@@ -24,7 +24,7 @@ st.write(f"Incorrect guesses: {', '.join(st.session_state.non_correct_letters)}"
 # Handle guess input
 guess = st.text_input("Guess a letter: ").lower()
 
-# Game logic
+# Game logic (only executed if user inputs a guess)
 if guess:
     if guess in st.session_state.display:
         st.warning(f"You've already guessed the letter '{guess}'. Try another one.")
@@ -52,7 +52,7 @@ st.write(f"Word so far: {' '.join(st.session_state.display)}")
 st.write(f"Lives remaining: {st.session_state.lives}")
 st.write(f"Incorrect guesses: {', '.join(st.session_state.non_correct_letters)}")
 
-# Reset button to restart the game
+# Reset button to restart the game (this will only appear once)
 if st.button('Reset Game'):
     random_word = rand.choice(english_word_list).lower()
     st.session_state.random_word = random_word
