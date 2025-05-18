@@ -51,7 +51,7 @@ if not st.session_state.win_game and st.session_state.lives > 0:
                 st.success("Congratulations! You won the game!")
             # Clear input after processing
             st.session_state.input_key += 1
-            st.experimental_rerun()
+            st.rerun()
         # Incorrect guess
         else:
             st.session_state.lives -= 1
@@ -63,7 +63,7 @@ if not st.session_state.win_game and st.session_state.lives > 0:
                 st.error(f"Game Over! The word was **{st.session_state.random_word}**")
             # Clear input after processing
             st.session_state.input_key += 1
-            st.experimental_rerun()
+            st.rerun()
 
 else:
     # Game ended (win or lose)
@@ -80,4 +80,4 @@ if st.button('Reset Game'):
     st.session_state.display = ['_'] * len(st.session_state.random_word)
     st.session_state.win_game = False
     st.session_state.input_key += 1  # Change key to reset input box
-    st.experimental_rerun()
+    st.rerun()
