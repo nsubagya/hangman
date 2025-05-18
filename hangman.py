@@ -58,7 +58,7 @@ st.write(f"**Lives remaining:** {st.session_state.lives}")
 st.write(f"**Incorrect guesses:** {', '.join(st.session_state.non_correct_letters)}")
 
 # ------------------ Reset Game ------------------
-if st.button("🔄 Reset Game"):
+if st.button("Reset Game"):
     for key in ['lives', 'random_word', 'display', 'non_correct_letters', 'win_game', 'processed_guess']:
         st.session_state.pop(key, None)
     st.experimental_rerun()
